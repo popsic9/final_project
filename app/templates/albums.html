@@ -2,12 +2,13 @@
 <html>
     <head>
         <title>Artist: {{ artist }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
     </head>
     <body>
         <center>
         <div class="content">
             {% if artist %}
-                <h1 style = "color: rgb(0, 73, 168)"> {{ artist }}'s Albums</h1>
+                <h1> {{ artist }}'s Albums</h1>
                 <p style = "color: rgba(139, 28, 212, 0.836)"> (Ordered by popularity in descending order)</p>
                 <table>
                     {% for album in album_list %}
@@ -17,7 +18,7 @@
                     </tr>
                     {% endfor %}
                 </table>
-                <p> </p>
+                <br><br>
                 <form action="/songs" method="GET">
                     <label>
                         <b>Select an album</b>

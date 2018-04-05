@@ -38,13 +38,6 @@ def search_song(song_title, artist_name):
             song_info = song
             return song_info
 
-def parse_lyrics(lyrics):
-    lyrics = re.sub("\n\n", " ", lyrics)
-    lyrics = re.sub("\n", " ", lyrics)
-    lyrics = re.sub('  ', ' ', lyrics).strip()
-    lyrics = re.sub("([\(\[]).*?([\)\]])", '', lyrics)
-    lyrics = re.sub('[^\w\s]', '', lyrics)
-    return lyrics
 
 def get_lyrics(song_url):
     global headers

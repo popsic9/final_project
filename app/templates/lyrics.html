@@ -2,18 +2,19 @@
 <html>
     <head>
         <title>Lyrics: {{ song }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
     </head>
     <body>
         <center>
         <div class="content">
             {% if song %}
-            <h1 style = "color: rgb(0, 73, 168)">
+            <h1>
                 Song : {{ song }}
             </h1>
             {% endif %}
 
             {% if lyrics %}
-            <h2 style = "color: rgb(97, 184, 255)"> Lyrics </h2>
+            <h2> Lyrics </h2>
                 <p style="white-space: pre-line"> {{lyrics[0][0]}} </p>
             {% endif %}
             <pre>

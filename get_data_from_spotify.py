@@ -84,11 +84,13 @@ def get_cached_data(artist_name):
         return artist_dict
     else:
         print('Making a request for new artist info: {}'.format(artist_name))
+
         artist_dict = {'info': {}, 'albums': {}}
+
         artist_info = get_artist_info(artist_name)
         artist_dict['info'] = artist_info
-        artist_id = artist_info[0]
 
+        artist_id = artist_info[0]
         album_list = get_artist_albums(artist_id)
         artist_dict['albums'] = album_list
 
@@ -166,7 +168,6 @@ def get_artist_albums(artist_id):
         pop = value[1]
         if track_dict is None:
             continue
-        print(pop)
         album_list.append({album_name: [pop, track_dict]})
     return album_list
 
@@ -201,22 +202,9 @@ def get_track_info(track_dict):
         if feats is None:
             return None
         else:
-            danceability = feats.get('danceability')
             energy = feats.get('energy')
-            tempo = feats.get('tempo')
-            speechiness = feats.get('speechiness')
             valence = feats.get('valence')
-            more_info = [danceability,energy,tempo,speechiness,valence]
+            more_info = [energy,valence]
             track_dict[key].extend(more_info)
     return track_dict
 
-
-# artist_name = input('Input artist name')
-# text = get_cached_data(artist_name)
-# print(text)
-
-
-#get_artist_albums("3WrFJ7ztbogyGnTHbHJFl2")
-#print(get_album_tracks('3KzAvEXcqJKBF97HrXwlgf'))
-
-#get_artist_info("The Beatles")

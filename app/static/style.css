@@ -1,0 +1,23 @@
+/* style.css */
+body {
+    background-color: rgba(253, 186, 224, 0.21);
+}
+
+h1 {
+    color: rgb(0, 73, 168);
+    font-family: fantasy;
+    font-size: 44;
+}
+
+h2 {
+    color: rgb(50, 155, 241);
+    font-family: fantasy;
+    font-size: 44;
+}
+
+
+
+td {
+    color: rgb(99, 101, 247);
+    font-family: monospace;
+}

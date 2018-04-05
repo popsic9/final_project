@@ -2,18 +2,19 @@
 <html>
     <head>
         <title> Albums:{{ album }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
     </head>
     <body>
         <center>
         <div class="content">
             {% if album %}
-            <h1 style = "color: rgb(0, 73, 168)">
+            <h1>
                 Songs in {{ album }}
             </h1>
             {% endif %}
 
             {% if songs %}
-            <h2 style = "color: rgb(97, 184, 255)"> Songs: All songs in this album </h2>
+            <h2> Songs: All songs in this album </h2>
                 <table>
                     {% for song in songs %}
                     <tr>
@@ -35,7 +36,7 @@
             </pre>
 
             {% if songs_val %}
-            <h2 style = "color: rgb(97, 184, 255)"> Songs: Valences Larger Than 0.8 </h2>
+            <h2> Songs: Valences Larger Than 0.8 </h2>
                 <table>
                     {% for song in songs_val %}
                     <tr>

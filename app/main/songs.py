@@ -98,13 +98,15 @@ def plot(song_list):
 def index():
     album = request.args.get('album')
     if album:
-        try:
-            songs = get_songs_in_albums(album)
-            songs_val = get_songs_valences(album)
-            if songs_val == []:
-                songs_val = [("There is no song whose valence is larger than 0.8 in this album", "")]
-        except:
-            songs = ('The Name is Wrong, Please Return',)
-        song_list = get_songs_valences_energy(album)
-        div = plot(song_list)
+        songs = get_songs_in_albums(album)
+        songs_val = get_songs_valences(album)
+        if songs_val == []:
+            songs_val = [("There is no song whose valence is larger than 0.8 in this album", "")]
+        if songs == []:
+            songs = [('The Name is Wrong, Please Return',)]
+            songs_val = None
+            div = '<br>'
+        else:
+            song_list = get_songs_valences_energy(album)
+            div = plot(song_list)
     return render_template('songs.html', album = album, songs = songs, songs_val = songs_val, plot = div)

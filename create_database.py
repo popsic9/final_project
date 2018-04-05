@@ -46,15 +46,14 @@ def create_db():
                 'Name' TEXT,
                 'Track_Number' INTEGER,
                 'Artist_Name' TEXT,
+                'Artist_ID' INTEGER,
                 'Album_Name' TEXT,
                 'Album_Popularity' INTEGER,
                 'Duration_MS' REAL,
                 'Valence' REAL,
                 'Energy' REAL,
-                'Tempo' REAL,
-                'Speechiness' REAL,
-                'Danceability' REAL,
-                'Lyrics' TEXT
+                'Lyrics' TEXT,
+                FOREIGN KEY (Artist_ID) REFERENCES Artists (Id)
                 );
         '''
         cur.execute(statement)
@@ -90,24 +89,33 @@ def add_songs(artist_dict, song_dict):
 
     cur = conn.cursor()
     for artist in artist_dict:
-        print('-----Artists----{}-------'.format(artist))
+        #print('-----Artists----{}-------'.format(artist))
         for album in artist_dict[artist]['albums']:
             album_title = list(album.keys())[0]
+            album_name = album_title.split('(')[0].strip()
             pop = album[album_title][0]
             for song_id, song_features in album[album_title][1].items():
                 try:
                     lyrics = song_dict[artist][song_id]
                 except:
                     lyrics = "None"
-                track_number, track_name, duration_ms, danceability, energy, tempo, speechiness, valence = song_features
+                track_number, track_name, duration_ms, energy, valence = song_features
+                track_name = track_name.split("-")[0].strip()
+                statement = '''
+                    SELECT Id FROM 'Artists'
+                    WHERE Name = ?
+                '''
+                insertion = (artist, )
+                cur.execute(statement, insertion)
+                id_temp = cur.fetchall()
+                artist_id = int(id_temp[0][0])
                 statement = '''
                     INSERT INTO 'Songs'
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
-                insertion = (None, track_name, track_number, artist, album_title, pop,
-                            duration_ms, valence, energy, tempo, speechiness, danceability, lyrics)
+                insertion = (None, track_name, track_number, artist, artist_id,album_name, pop,
+                            duration_ms, valence, energy, lyrics)
                 cur.execute(statement, insertion)
-            print("Inserts All Songs from {}".format(album_title))
     conn.commit()
     conn.close()
 
@@ -119,8 +127,9 @@ def get_artists():
 
     cur = conn.cursor()
     statement = '''
-        SELECT DISTINCT(Name)
+        SELECT DISTINCT(Name), Popularity
         FROM Artists
+        ORDER BY Popularity DESC
     '''
     cur.execute(statement)
     artists_list = cur.fetchall()
@@ -184,8 +193,7 @@ def get_songs_in_albums(album):
     cur = conn.cursor()
 
     statement = """
-        SELECT Name, Track_Number, Album_Name, (Duration_MS / 1000 / 60) AS Duration, Valence, Energy,
-            Tempo, Speechiness, Danceability
+        SELECT Name
         FROM Songs
         WHERE Album_Name = ? 
         """
@@ -253,9 +261,3 @@ def get_lyrics_of_song(song):
     conn.close()
     return res
 
-
-
-# add_artists()
-# add_songs()
-# print(get_albums('The Beatles'))
-# print(get_songs_in_albums('Let It Be (Remastered)'))
