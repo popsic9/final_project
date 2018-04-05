@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Artist: {{ artist }}</title>
+    </head>
+    <body>
+        <center>
+        <div class="content">
+            {% if artist %}
+                <h1 style = "color: rgb(0, 73, 168)"> {{ artist }}'s Albums</h1>
+                <p style = "color: rgba(139, 28, 212, 0.836)"> (Ordered by popularity in descending order)</p>
+                <table>
+                    {% for album in album_list %}
+                    <tr>
+                        <td>{{album[0]}}</td>
+                        <td>{{album[1]}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <p> </p>
+                <form action="/songs" method="GET">
+                    <label>
+                        <b>Select an album</b>
+                        <input name = "album" type="text" placeholder="Start typing..." />
+                    </label>
+                    <button type="submit">Input</button>
+                </form>
+            {% endif %}
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            {{ plot|safe }}
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+            <a href = '/'>Back to Home</a>
+        </div>
+        </center>
+    </body>
+    <center>
+    <footer>
+        <br><br><br><br>
+         <p>All rights reserved by CHEN SUN</p>
+    </footer>
+    </center>
+
+</html>

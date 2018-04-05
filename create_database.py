@@ -1,15 +1,15 @@
 import sqlite3
 import get_data_from_spotify as spotify
-
+import get_data_from_genius as genius
 import json
 import sys
 
 
 DB_NAME = 'SpotifyAndGenius.sqlite'
-GENIUS_CACHE_FNAME = 'songs.json'
+GENIUS_CACHE = 'songs.json'
 SPOTIFY_CACHE = 'artists.json'
 try:
-    with open(GENIUS_CACHE_FNAME, 'r') as f:
+    with open(GENIUS_CACHE, 'r') as f:
         song_dict = json.loads(f.read())
 except:
     song_dict = {}
@@ -47,6 +47,7 @@ def create_db():
                 'Track_Number' INTEGER,
                 'Artist_Name' TEXT,
                 'Album_Name' TEXT,
+                'Album_Popularity' INTEGER,
                 'Duration_MS' REAL,
                 'Valence' REAL,
                 'Energy' REAL,
@@ -63,7 +64,7 @@ def create_db():
         sys.exit(1)
 
 
-def add_artists():
+def add_artists(artist_dict):
     try:
         conn = sqlite3.connect(DB_NAME)
     except:
@@ -76,12 +77,12 @@ def add_artists():
             INSERT INTO 'Artists'
             VALUES(?, ?, ?, ?)
         '''
-        insertion = (None, artist, genre, artist_popularity,)
+        insertion = (None, artist, genre, artist_popularity)
         cur.execute(statement, insertion)
     conn.commit()
     conn.close()
 
-def add_songs():
+def add_songs(artist_dict, song_dict):
     try:
         conn = sqlite3.connect(DB_NAME)
     except:
@@ -92,7 +93,8 @@ def add_songs():
         print('-----Artists----{}-------'.format(artist))
         for album in artist_dict[artist]['albums']:
             album_title = list(album.keys())[0]
-            for song_id, song_features in album[album_title].items():
+            pop = album[album_title][0]
+            for song_id, song_features in album[album_title][1].items():
                 try:
                     lyrics = song_dict[artist][song_id]
                 except:
@@ -100,14 +102,30 @@ def add_songs():
                 track_number, track_name, duration_ms, danceability, energy, tempo, speechiness, valence = song_features
                 statement = '''
                     INSERT INTO 'Songs'
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
-                insertion = (None, track_name, track_number, artist, album_title,
+                insertion = (None, track_name, track_number, artist, album_title, pop,
                             duration_ms, valence, energy, tempo, speechiness, danceability, lyrics)
                 cur.execute(statement, insertion)
             print("Inserts All Songs from {}".format(album_title))
     conn.commit()
     conn.close()
+
+def get_artists():
+    try:
+        conn = sqlite3.connect(DB_NAME)
+    except:
+        sys.exit(1)
+
+    cur = conn.cursor()
+    statement = '''
+        SELECT DISTINCT(Name)
+        FROM Artists
+    '''
+    cur.execute(statement)
+    artists_list = cur.fetchall()
+    return artists_list
+
 
 def get_albums(artist_name):
     try:
@@ -118,20 +136,44 @@ def get_albums(artist_name):
     cur = conn.cursor()
 
     statement = '''
-        SELECT DISTINCT(Album_Name)
+        SELECT Album_Name, Album_Popularity
+        FROM Songs
+        WHERE Artist_Name = ?
+        GROUP BY Album_Name
+        ORDER BY Album_Popularity DESC
+    '''
+    insertion = (artist_name,)
+    cur.execute(statement, insertion)
+    album_list = cur.fetchall()
+    conn.close()
+
+    if album_list == []:
+        print('Artist is not in the DataBase, we will add it later')
+        raise ValueError
+    return album_list
+
+def get_songs(artist_name):
+    try:
+        conn = sqlite3.connect(DB_NAME)
+    except:
+        sys.exit(1)
+
+    cur = conn.cursor()
+
+    statement = '''
+        SELECT Name
         FROM Songs
         WHERE Artist_Name = ?
     '''
     insertion = (artist_name,)
     cur.execute(statement, insertion)
-    album_list = cur.fetchall()
-    if album_list == []:
+    song_list = cur.fetchall()
+    conn.close()
+
+    if song_list == []:
         print('Artist is not in the DataBase, we will add it later')
         raise ValueError
-    albums = []
-    for i in album_list:
-        albums.append(i[0])
-    return tuple(albums)
+    return song_list
 
 def get_songs_in_albums(album):
     try:
@@ -149,11 +191,71 @@ def get_songs_in_albums(album):
         """
     insertion = (album,)
     cur.execute(statement,insertion)
-    return cur.fetchall()
+    res = cur.fetchall()
+    conn.close()
+    return res
+
+def get_songs_valences(album):
+    try:
+        conn = sqlite3.connect(DB_NAME)
+    except:
+        sys.exit(1)
+
+    cur = conn.cursor()
+
+    statement = """
+        SELECT Name, Valence
+        FROM Songs
+        WHERE Album_Name = ? AND Valence > 0.8
+        ORDER BY Valence DESC
+        """
+    insertion = (album,)
+    cur.execute(statement,insertion)
+    res = cur.fetchall()
+    conn.close()
+    return res
+
+def get_songs_valences_energy(album):
+    try:
+        conn = sqlite3.connect(DB_NAME)
+    except:
+        sys.exit(1)
+
+    cur = conn.cursor()
+
+    statement = """
+        SELECT Name, Valence, Energy
+        FROM Songs
+        WHERE Album_Name = ?
+        """
+    insertion = (album,)
+    cur.execute(statement,insertion)
+    res = cur.fetchall()
+    conn.close()
+    return res
+
+def get_lyrics_of_song(song):
+    try:
+        conn = sqlite3.connect(DB_NAME)
+    except:
+        sys.exit(1)
+
+    cur = conn.cursor()
+
+    statement = """
+        SELECT Lyrics
+        FROM Songs
+        WHERE Name = ?
+        """
+    insertion = (song,)
+    cur.execute(statement,insertion)
+    res = cur.fetchall()
+    conn.close()
+    return res
 
 
-create_db()
-add_artists()
-add_songs()
-print(get_albums('The Beatles'))
-print(get_songs_in_albums('Let It Be (Remastered)'))
+
+# add_artists()
+# add_songs()
+# print(get_albums('The Beatles'))
+# print(get_songs_in_albums('Let It Be (Remastered)'))

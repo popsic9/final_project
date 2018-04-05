@@ -61,7 +61,6 @@ def get_lyrics(song_url):
     soup = BeautifulSoup(response.text, "html.parser")
     #[h.extract() for h in soup('script')]
     lyrics = soup.find("div", class_="lyrics").get_text()
-    lyrics = parse_lyrics(lyrics)
     return lyrics
 
 def get_lyrics_without_api(song_title, artist_name):
@@ -75,11 +74,10 @@ def get_lyrics_without_api(song_title, artist_name):
         soup = BeautifulSoup(response.text, 'html.parser')
         #[h.extract() for h in soup('script')]
         lyrics = soup.find("div", class_="lyrics").get_text()
-        lyrics = parse_lyrics(lyrics)
         return lyrics
     return None
 
-def get_cached_lyrics():
+def get_cached_lyrics(artist_dict):
     for artist, value in artist_dict.items():
         if song_dict.get(artist):
             print("Getting data for {}".format(artist))
@@ -88,7 +86,7 @@ def get_cached_lyrics():
         print('Making Requests for Song Lyrics for {}'.format(artist))
         for album in value['albums']:
             album_name = list(album.keys())[0]
-            for song_id, song_features in album[album_name].items():
+            for song_id, song_features in album[album_name][1].items():
                 if song_dict.get(song_id):
                     continue
                 song_title = song_features[1].split('-')[0].strip()
@@ -109,12 +107,10 @@ def get_cached_lyrics():
         f.write(json.dumps(song_dict))
 
 
-
-
 #get_lyrics("/songs/82381")
 
 
-get_cached_lyrics()
+#get_cached_lyrics()
 # text = get_lyrics_without_api('Hey Jude','The Beatles')
 # print(text)
 # text = search_song('Hey Jude','The Beatles')

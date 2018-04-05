@@ -83,7 +83,7 @@ def get_cached_data(artist_name):
         print("Getting Cached Data for artist {}".format(artist_name))
         return artist_dict
     else:
-        print('Making a request for new artist info {}'.format(artist_name))
+        print('Making a request for new artist info: {}'.format(artist_name))
         artist_dict = {'info': {}, 'albums': {}}
         artist_info = get_artist_info(artist_name)
         artist_dict['info'] = artist_info
@@ -121,7 +121,7 @@ def get_artist_info(artist_name):
     
     return artist_info
 
-def get_related_artist(artist_id, limit=5):
+def get_related_artist(artist_id, limit = 1):
     base_url = "https://api.spotify.com/v1/artists/{}/related-artists".format(artist_id)
     oauth2inst = authentication_session()
     related_artists = oauth2inst.get(base_url).text
@@ -149,16 +149,25 @@ def get_artist_albums(artist_id):
     albums_info = json.loads(album_session.text)['items']
     album_dict = {}
     for album in albums_info:
+        url = 'https://api.spotify.com/v1/albums/' + album['id']
+        detail_url = requests.get(url).url
+        oauth2inst2 = authentication_session()
+        detail_text = oauth2inst2.get(detail_url).text
+        json_dict = json.loads(detail_text)
+        popularity = json_dict["popularity"]
+
         album_name = album['name']
         album_name = re.sub("'", "", album_name)
         album_name = re.sub('"', '', album_name)
-        album_dict[album_name] = album['id'] 
+        album_dict[album_name] = [album['id'], popularity]
     album_list = []
-    for album_name, album_id in album_dict.items():
-        track_dict = get_album_tracks(album_id)
+    for album_name, value in album_dict.items():
+        track_dict = get_album_tracks(value[0])
+        pop = value[1]
         if track_dict is None:
             continue
-        album_list.append({album_name: track_dict})
+        print(pop)
+        album_list.append({album_name: [pop, track_dict]})
     return album_list
 
 
@@ -205,3 +214,9 @@ def get_track_info(track_dict):
 # artist_name = input('Input artist name')
 # text = get_cached_data(artist_name)
 # print(text)
+
+
+#get_artist_albums("3WrFJ7ztbogyGnTHbHJFl2")
+#print(get_album_tracks('3KzAvEXcqJKBF97HrXwlgf'))
+
+#get_artist_info("The Beatles")

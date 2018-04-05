@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Albums:{{ album }}</title>
+    </head>
+    <body>
+        <center>
+        <div class="content">
+            {% if album %}
+            <h1 style = "color: rgb(0, 73, 168)">
+                Songs in {{ album }}
+            </h1>
+            {% endif %}
+
+            {% if songs %}
+            <h2 style = "color: rgb(97, 184, 255)"> Songs: All songs in this album </h2>
+                <table>
+                    {% for song in songs %}
+                    <tr>
+                        <td>{{song[0]}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <form action="/lyrics" method="GET">
+                <label>
+                    <p> </p>
+                    <b>Select a Song to get its lyrics</b>
+                    <input name="song" type="text" placeholder="Start typing..." />
+                </label>
+                <button type="submit">Input</button>
+            </form>
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+
+            {% if songs_val %}
+            <h2 style = "color: rgb(97, 184, 255)"> Songs: Valences Larger Than 0.8 </h2>
+                <table>
+                    {% for song in songs_val %}
+                    <tr>
+                        <td>{{song[0]}}</td>
+                        <td>{{song[1]}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            {{ plot|safe }}
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+            <a href = '/'>Back to Home</a>
+        </div>
+        </center>
+    </body>
+    <center>
+    <footer>
+        <br><br><br><br>
+         <p>All rights reserved by CHEN SUN</p>
+    </footer>
+    </center>
+
+</html>
+
