@@ -23,6 +23,45 @@ except:
 
 headers = {'Authorization': 'Bearer {}'.format(CLIENT_ACCESS_TOKEN)}
 
+###################################################
+#                  Cache Data                     #
+###################################################
+def get_cached_lyrics(artist_dict):
+    for artist, value in artist_dict.items():
+        if song_dict.get(artist):
+            print("Getting data for {}".format(artist))
+            continue
+        song_dict[artist] = {}
+        print('Making Requests for Song Lyrics for {}'.format(artist))
+        for album in value['albums']:
+            album_name = list(album.keys())[0]
+            for song_id, song_features in album[album_name][1].items():
+                if song_dict.get(song_id):
+                    continue
+                song_title = song_features[1].split('-')[0].strip()
+                print(song_title, artist)
+                song_info = search_song(song_title, artist)
+                if song_info:
+                    song_api_path = song_info["result"]["api_path"]
+                    lyrics = get_lyrics(song_api_path)
+                    song_dict[artist][song_id] = lyrics
+                else:
+                    lyrics = get_lyrics_without_api(song_title, artist)
+                    if lyrics:
+                        song_dict[artist][song_id] = lyrics
+                    else:
+                        print("Can't find lyrics for {}".format(song_title))
+                        continue
+    with open(GENIUS_CACHE, 'w') as f:
+        f.write(json.dumps(song_dict))
+
+
+
+
+###################################################
+#              Functions to Get Data              #
+###################################################
+
 def search_song(song_title, artist_name):
     global headers
     base_url = "https://api.genius.com"
@@ -56,6 +95,8 @@ def get_lyrics(song_url):
     lyrics = soup.find("div", class_="lyrics").get_text()
     return lyrics
 
+
+
 def get_lyrics_without_api(song_title, artist_name):
     artist = '-'.join(artist_name.split())
     song_title = '-'.join(song_title.split())
@@ -69,45 +110,3 @@ def get_lyrics_without_api(song_title, artist_name):
         lyrics = soup.find("div", class_="lyrics").get_text()
         return lyrics
     return None
-
-def get_cached_lyrics(artist_dict):
-    for artist, value in artist_dict.items():
-        if song_dict.get(artist):
-            print("Getting data for {}".format(artist))
-            continue
-        song_dict[artist] = {}
-        print('Making Requests for Song Lyrics for {}'.format(artist))
-        for album in value['albums']:
-            album_name = list(album.keys())[0]
-            for song_id, song_features in album[album_name][1].items():
-                if song_dict.get(song_id):
-                    continue
-                song_title = song_features[1].split('-')[0].strip()
-                print(song_title, artist)
-                song_info = search_song(song_title, artist)
-                if song_info:
-                    song_api_path = song_info["result"]["api_path"]
-                    lyrics = get_lyrics(song_api_path)
-                    song_dict[artist][song_id] = lyrics
-                else:
-                    lyrics = get_lyrics_without_api(song_title, artist)
-                    if lyrics:
-                        song_dict[artist][song_id] = lyrics
-                    else:
-                        print("Can't find lyrics for {}".format(song_title))
-                        continue
-    with open(GENIUS_CACHE, 'w') as f:
-        f.write(json.dumps(song_dict))
-
-
-#get_lyrics("/songs/82381")
-
-
-#get_cached_lyrics()
-# text = get_lyrics_without_api('Hey Jude','The Beatles')
-# print(text)
-# text = search_song('Hey Jude','The Beatles')
-# print(text)
-
-# text = search_song('Ticket To Ride', 'The Beatles')
-# print(text)

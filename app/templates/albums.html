@@ -10,11 +10,15 @@
             {% if artist %}
                 <h1> {{ artist }}'s Albums</h1>
                 <p style = "color: rgba(139, 28, 212, 0.836)"> (Ordered by popularity in descending order)</p>
-                <table>
+                <table style="width:25%">
+                    <tr>
+                        <th align="left">Albums</th>
+                        <th>Popularity</th>
+                    </tr>
                     {% for album in album_list %}
                     <tr>
                         <td>{{album[0]}}</td>
-                        <td>{{album[1]}}</td>
+                        <td align="center">{{album[1]}}</td>
                     </tr>
                     {% endfor %}
                 </table>

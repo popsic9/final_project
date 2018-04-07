@@ -27,7 +27,9 @@ def check_if_cached(cache_name):
     return CACHE_DICTION
 
 
-# Token
+###################################################
+#                     Token                       #
+###################################################
 def get_token_from_cache():
     with open(TOKEN, 'r') as f:
         token_json = f.read()
@@ -51,7 +53,9 @@ def has_token_expired(timestamp_str):
         return False  
 
 
-# Authentication
+###################################################
+#                 Authentication                  #
+###################################################
 def authentication_session():
     # if the token has never been saved, assign it to None
     try:
@@ -74,7 +78,9 @@ def authentication_session():
     return oauth2inst
 
 
-# Caching sporify data
+###################################################
+#                  Cache Data                     #
+###################################################
 def get_cached_data(artist_name):
     cached_artist_data = check_if_cached(CACHE_FNAME)
     artist_dict = cached_artist_data.get(artist_name)
@@ -100,7 +106,14 @@ def get_cached_data(artist_name):
         return artist_dict
 
 
-# Get information we want
+###################################################
+#               Processing Data                   #
+###################################################
+def cleanWord(word):
+    word = re.sub("'", "", word)
+    word = re.sub('"', '', word)
+    return word
+
 def get_artist_info(artist_name):
     # get the url needed to make the oauth2 request
     artist = {'q': "{}".format(artist_name), 'type': 'artist'}
@@ -123,7 +136,7 @@ def get_artist_info(artist_name):
     
     return artist_info
 
-def get_related_artist(artist_id, limit = 1):
+def get_related_artist(artist_id, limit = 3):
     base_url = "https://api.spotify.com/v1/artists/{}/related-artists".format(artist_id)
     oauth2inst = authentication_session()
     related_artists = oauth2inst.get(base_url).text
@@ -131,11 +144,7 @@ def get_related_artist(artist_id, limit = 1):
     related_list = json.loads(related_artists)['artists']
     related_artists = []
     for i in range(limit):
-        related_artist_name = related_list[i]['name']
-        # cleaning up the artist name
-        related_artist_name = re.sub("'", "", related_artist_name)
-        related_artist_name = re.sub('"', '', related_artist_name)
-        related_artists.append(related_artist_name)
+        related_artists.append(cleanWord(related_list[i]['name']))
     return related_artists
 
 def get_artist_albums(artist_id):
@@ -158,9 +167,7 @@ def get_artist_albums(artist_id):
         json_dict = json.loads(detail_text)
         popularity = json_dict["popularity"]
 
-        album_name = album['name']
-        album_name = re.sub("'", "", album_name)
-        album_name = re.sub('"', '', album_name)
+        album_name = cleanWord(album['name'])
         album_dict[album_name] = [album['id'], popularity]
     album_list = []
     for album_name, value in album_dict.items():
@@ -179,17 +186,12 @@ def get_album_tracks(album_id):
     tracks_info = json.loads(tracks.text)['items']
     track_dict = {}
     for track in tracks_info:
-        track_name = track.get('name')
-        track_name = re.sub("'", "", track_name)
-        track_name = re.sub('"', '', track_name)
+        track_name = cleanWord(track.get('name'))
         track_dict[track['id']] = [track.get("track_number"), track_name, track.get('duration_ms')]
     track_dict = get_track_info(track_dict)
     return track_dict
     
 def get_track_info(track_dict):
-    """ track_id: track name, ID, number, and duration, danceability, energy,
-        tempo, speechiness, and valence
-    """
     track_keys_by_number = sorted(track_dict.items(), key = lambda x: x[1][0])
     track_keys_by_number = [x[0] for x in track_keys_by_number]
     url = 'https://api.spotify.com/v1/audio-features?ids={}'.format(','.join(list(track_dict.keys())))

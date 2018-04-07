@@ -17,11 +17,15 @@
                 <h1>Artists in Current Database</h1>
                 <p style = "color: rgba(139, 28, 212, 0.836)"> (Order by Popularity in descending order) </p>
                 {% if artists %}
-                <table>
+                <table style="width:25%">
+                    <tr>
+                        <th align="left">Artists</th>
+                        <th>Popularity</th>
+                    </tr>
                     {% for i in artists %}
                     <tr>
                         <td>{{i[0]}}</td>
-                        <td>{{i[1]}}</td>
+                        <td align="center">{{i[1]}}</td>
                     </tr>
                     {% endfor %}
                 </table>

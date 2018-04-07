@@ -20,7 +20,9 @@ except:
     artist_dict = {}
 
 
-# Create DB
+###################################################
+#                     Create DB                   #
+###################################################
 def create_db():
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -63,201 +65,115 @@ def create_db():
         sys.exit(1)
 
 
+
+###################################################
+#                 Create Two Class                #
+###################################################
+class Artist():
+    def __init__(self, name = "No Name", id = None, genre = "No genre", popularity = None, related_artists = None, json_dict = None):
+        self.name = name
+        if json_dict is None:
+            self.id = None
+            self.genre = genre
+            self.popularity = popularity
+            self.related_artists = related_artists
+        else:
+            self.id = json_dict['info'][0]
+            self.genre = json_dict['info'][1]
+            self.popularity = json_dict['info'][2]
+            self.related_artists = json_dict['info'][3]
+    def __str__(self):
+        return "%s, %s, %s, %d"%(self.name, self.id, self.genre, self.popularity)
+
+class Songs():
+    def __init__(self, song_id = "No id", name = "No Name", track_id = None, artist = "No Artist", album = "No album", popularity = None, 
+                duration_ms = None, valence = None, energy = None, lyrics = "No lyrics", json_dict = None):
+        self.song_id = song_id
+        self.name = name
+        self.track_id = track_id
+        self.artist = artist
+        self.album = album
+        self.popularity = popularity
+        self.duration_ms = duration_ms
+        self.valence = valence
+        self.energy = energy
+        if json_dict is None:
+            self.lyrics = lyrics
+        else:
+            try:
+                self.lyrics = json_dict[self.song_id].strip()
+            except:
+                self.lyrics = lyrics
+
+    def __str__(self):
+        return "%s, %s, %s, %d, %s"%(self.name, self.artist, self.album, self.popularity, self.lyrics)
+
+
+
+
+
+
+###################################################
+#                   Add Data to DB                #
+###################################################
+
 def add_artists(artist_dict):
     try:
         conn = sqlite3.connect(DB_NAME)
     except:
         sys.exit(1)
-
     cur = conn.cursor()
-    for artist in artist_dict:
-        artist_id, genre, artist_popularity, related_artists = artist_dict[artist]['info']
+
+    for artistName in artist_dict:
+        artist = Artist(name = artistName, json_dict = artist_dict[artistName])
         statement = '''
             INSERT INTO 'Artists'
             VALUES(?, ?, ?, ?)
         '''
-        insertion = (None, artist, genre, artist_popularity)
+        insertion = (None, artist.name, artist.genre, artist.popularity)
         cur.execute(statement, insertion)
     conn.commit()
     conn.close()
+    return True
+
 
 def add_songs(artist_dict, song_dict):
     try:
         conn = sqlite3.connect(DB_NAME)
     except:
         sys.exit(1)
-
     cur = conn.cursor()
+
     for artist in artist_dict:
         #print('-----Artists----{}-------'.format(artist))
         for album in artist_dict[artist]['albums']:
             album_title = list(album.keys())[0]
             album_name = album_title.split('(')[0].strip()
             pop = album[album_title][0]
+
             for song_id, song_features in album[album_title][1].items():
-                try:
-                    lyrics = song_dict[artist][song_id]
-                except:
-                    lyrics = "None"
-                track_number, track_name, duration_ms, energy, valence = song_features
-                track_name = track_name.split("-")[0].strip()
+                song = Songs(song_id = song_id,name = song_features[1].split("-")[0].strip(), track_id = song_features[0], 
+                            artist = artist, album = album_name, popularity = pop, duration_ms = song_features[2], 
+                            valence = song_features[3], energy = song_features[4],json_dict = song_dict[artist])
+
                 statement = '''
                     SELECT Id FROM 'Artists'
                     WHERE Name = ?
                 '''
-                insertion = (artist, )
+                insertion = (song.artist, )
                 cur.execute(statement, insertion)
                 id_temp = cur.fetchall()
                 artist_id = int(id_temp[0][0])
+
                 statement = '''
                     INSERT INTO 'Songs'
                     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
-                insertion = (None, track_name, track_number, artist, artist_id,album_name, pop,
-                            duration_ms, valence, energy, lyrics)
+                insertion = (None, song.name, song.track_id, song.artist, artist_id,song.album, song.popularity,
+                            song.duration_ms, song.valence, song.energy, song.lyrics)
                 cur.execute(statement, insertion)
+    
     conn.commit()
     conn.close()
-
-def get_artists():
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-    statement = '''
-        SELECT DISTINCT(Name), Popularity
-        FROM Artists
-        ORDER BY Popularity DESC
-    '''
-    cur.execute(statement)
-    artists_list = cur.fetchall()
-    return artists_list
-
-
-def get_albums(artist_name):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-
-    statement = '''
-        SELECT Album_Name, Album_Popularity
-        FROM Songs
-        WHERE Artist_Name = ?
-        GROUP BY Album_Name
-        ORDER BY Album_Popularity DESC
-    '''
-    insertion = (artist_name,)
-    cur.execute(statement, insertion)
-    album_list = cur.fetchall()
-    conn.close()
-
-    if album_list == []:
-        print('Artist is not in the DataBase, we will add it later')
-        raise ValueError
-    return album_list
-
-def get_songs(artist_name):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-
-    statement = '''
-        SELECT Name
-        FROM Songs
-        WHERE Artist_Name = ?
-    '''
-    insertion = (artist_name,)
-    cur.execute(statement, insertion)
-    song_list = cur.fetchall()
-    conn.close()
-
-    if song_list == []:
-        print('Artist is not in the DataBase, we will add it later')
-        raise ValueError
-    return song_list
-
-def get_songs_in_albums(album):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-
-    statement = """
-        SELECT Name
-        FROM Songs
-        WHERE Album_Name = ? 
-        """
-    insertion = (album,)
-    cur.execute(statement,insertion)
-    res = cur.fetchall()
-    conn.close()
-    return res
-
-def get_songs_valences(album):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-
-    statement = """
-        SELECT Name, Valence
-        FROM Songs
-        WHERE Album_Name = ? AND Valence > 0.8
-        ORDER BY Valence DESC
-        """
-    insertion = (album,)
-    cur.execute(statement,insertion)
-    res = cur.fetchall()
-    conn.close()
-    return res
-
-def get_songs_valences_energy(album):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-
-    statement = """
-        SELECT Name, Valence, Energy
-        FROM Songs
-        WHERE Album_Name = ?
-        """
-    insertion = (album,)
-    cur.execute(statement,insertion)
-    res = cur.fetchall()
-    conn.close()
-    return res
-
-def get_lyrics_of_song(song):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-    except:
-        sys.exit(1)
-
-    cur = conn.cursor()
-
-    statement = """
-        SELECT Lyrics
-        FROM Songs
-        WHERE Name = ?
-        """
-    insertion = (song,)
-    cur.execute(statement,insertion)
-    res = cur.fetchall()
-    conn.close()
-    return res
+    return True
 

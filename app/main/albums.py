@@ -1,14 +1,15 @@
 from flask import Blueprint, render_template, request
 from create_database import *
-import requests
+from database_function import *
 
 import re
 import operator
+
 import nltk
 nltk.download('punkt')
 nltk.download('stopwords')
+
 from nltk.corpus import stopwords
-import plotly.plotly as py
 import plotly.graph_objs as go
 import plotly.offline as offline
 
@@ -62,10 +63,8 @@ def plot(words_count, artist):
         title = 'Top 10 Words of ' + artist,
     )
     fig = go.Figure(data = data, layout = layout)
-    #offline.plot(fig, filename='file.html')
     div = offline.plot(fig, include_plotlyjs=False, output_type='div')
     return div
-    #py.plot(fig, filename='basic-bar')
 
 
 @albums.route('/albums', methods = ['GET'])
@@ -98,7 +97,4 @@ def index():
         song_list = get_songs(artist)
         text = top_10_words(song_list)
         div = plot(text, artist)
-        print(div)
-        
-        
     return render_template('albums.html', artist = artist, album_list = album_list, plot = div)

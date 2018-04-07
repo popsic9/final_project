@@ -37,11 +37,15 @@
 
             {% if songs_val %}
             <h2> Songs: Valences Larger Than 0.8 </h2>
-                <table>
+                <table style="width:25%">
+                    <tr>
+                        <th align="left">Songs</th>
+                        <th>Valences</th>
+                    </tr>
                     {% for song in songs_val %}
                     <tr>
-                        <td>{{song[0]}}</td>
-                        <td>{{song[1]}}</td>
+                        <td align="left">{{song[0]}}</td>
+                        <td align="center">{{song[1]}}</td>
                     </tr>
                     {% endfor %}
                 </table>

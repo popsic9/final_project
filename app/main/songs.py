@@ -1,9 +1,7 @@
 from flask import Blueprint, render_template, request
 from create_database import *
-import requests
+from database_function import *
 
-
-import plotly.plotly as py
 import plotly.graph_objs as go
 import plotly.offline as offline
 

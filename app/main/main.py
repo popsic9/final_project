@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request
 from create_database import *
+from database_function import *
 import requests
 create_db()
 add_artists(artist_dict)

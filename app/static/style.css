@@ -20,4 +20,14 @@ h2 {
 td {
     color: rgb(99, 101, 247);
     font-family: monospace;
+    align: "center";
+}
+
+th{
+    color: rgb(68, 71, 245);
+    font-family: monospace;
+}
+
+table{
+    style : "width:25%";
 }
