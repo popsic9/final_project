@@ -56,10 +56,14 @@ The goal of this project is to make a web page for searching artists and display
 
 
 | **File**        | **Function**           |
-| ------------- |:-------------:|
-| main.py      | Show the current artist in database |
-| album.py      | Show top10 words of the artist, or show all albums of the artist      |
-| songs.py | Show all songs in the albumshow all songs whose valence are larger than 0.8 or show valence vs. energy of all songs     |
-| lyrics.py | Show lyrics of the song     |
+| ------------- |-------------|
+| *main.py*      | Show the current artist in database |
+| *album.py*      | Show top10 words of the artist, or show all albums of the artist      |
+| *songs.py* | Show all songs in the albumshow all songs whose valence are larger than 0.8 or show valence vs. energy of all songs     |
+| *lyrics.py* | Show lyrics of the song     |
 
+- In *album.py*, there are two function, *top_10_words* and *plot()*, to show the graph of top 10 words of the title of the songs owned by the artist, using ploty
+- In *songs.py*, there is a function called *plot()* to show the valence vs. energy graph, using ploty. Valance is a number to describe whether the song is likely to make listener feel happy or sad.
+
+## User Guidessss
 
