@@ -53,6 +53,20 @@ The goal of this project is to make a web page for searching artists and display
 ```Python3
 database_function.py
 ```
+5. Four testcases testing basic functions of the above code, using unittest.
+```Python3
+test_cases.py
+```
+6. Run the app. All the code of the web (controller/main, static, templates) are in app folder.
+```Python3
+app.py
+```
+| File        | Function           |
+| ------------- |:-------------:|
+| main.py      | right-aligned |
+| album.py      | centered      |
+| songs.py | are neat      |
+| lyrics.py | are neat      |
 
 
 
