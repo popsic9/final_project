@@ -13,14 +13,23 @@
             </h1>
             {% endif %}
 
-            {% if lyrics %}
-            <h2> Lyrics </h2>
-                <p style="white-space: pre-line"> {{lyrics[0][0]}} </p>
-            {% endif %}
-            <pre>
+            {% if b %}
+            <p> The Song Name is Wrong. Please Return</p>
+             <pre>
 -------------------------------------------------------------------------------------------------------------------------------------
             </pre>
             <a href = '/'>Back to Home</a>
+            {% endif %}
+
+            {% if lyrics %}
+            <h2> Lyrics </h2>
+                <p style="white-space: pre-line"> {{lyrics[0][0]}} </p>
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+            <a href = '/songs?album={{url}}'>Back to {{ album }}</a>
+            {% endif %}
+
         </div>
         </center>
     </body>

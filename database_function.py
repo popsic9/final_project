@@ -23,6 +23,11 @@ except:
 ###################################################
 #              Date Processing Functions          #
 ###################################################
+'''
+    Get artist Name and Popularity in descending order in 'Artists' Table
+    Params: None
+    Return: a list of tuples
+'''
 def get_artists():
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -42,6 +47,13 @@ def get_artists():
     return artists_list
 
 
+
+
+'''
+    Get album Name and Popularity in descending order of a specific artist
+    Params: artist name
+    Return: a list of tuples
+'''
 def get_albums(artist_name):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -65,6 +77,14 @@ def get_albums(artist_name):
         raise ValueError
     return album_list
 
+
+
+
+'''
+    Get song Name of a specific artist
+    Params: artist name
+    Return: a list of tuples
+'''
 def get_songs(artist_name):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -86,6 +106,16 @@ def get_songs(artist_name):
         raise ValueError
     return song_list
 
+
+
+
+
+
+'''
+    Get song Name in a specific album
+    Params: album name
+    Return: a list of tuples
+'''
 def get_songs_in_albums(album):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -99,11 +129,19 @@ def get_songs_in_albums(album):
         """
     insertion = (album,)
     cur.execute(statement,insertion)
-    res = cur.fetchall()
+    song_list = cur.fetchall()
     conn.close()
 
-    return res
+    return song_list
 
+
+
+
+'''
+    Get song Name, Valence in a specific album in descending order, where Valence > 0.8
+    Params: album name
+    Return: a list of tuples
+'''
 def get_songs_valences(album):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -118,11 +156,20 @@ def get_songs_valences(album):
         """
     insertion = (album,)
     cur.execute(statement,insertion)
-    res = cur.fetchall()
+    song_list = cur.fetchall()
     conn.close()
 
-    return res
+    return song_list
 
+
+
+
+
+'''
+    Get song Name, Valence, Energy in a specific album
+    Params: album name
+    Return: a list of tuples
+'''
 def get_songs_valences_energy(album):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -136,11 +183,40 @@ def get_songs_valences_energy(album):
         """
     insertion = (album,)
     cur.execute(statement,insertion)
-    res = cur.fetchall()
+    song_list = cur.fetchall()
     conn.close()
 
-    return res
+    return song_list
 
+
+def get_album_with_songs(song):
+    try:
+        conn = sqlite3.connect(DB_NAME)
+    except:
+        sys.exit(1)
+    cur = conn.cursor()
+    statement = """
+        SELECT Album_Name
+        FROM Songs
+        WHERE Name = ?
+        """
+    insertion = (song,)
+    cur.execute(statement,insertion)
+    album = cur.fetchall()
+    conn.close()
+
+    return album
+
+
+
+
+
+
+'''
+    Get lyrics of a specific song
+    Params: song name
+    Return: a list of tuples
+'''
 def get_lyrics_of_song(song):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -154,8 +230,8 @@ def get_lyrics_of_song(song):
         """
     insertion = (song,)
     cur.execute(statement,insertion)
-    res = cur.fetchall()
+    lyrics = cur.fetchall()
     conn.close()
 
-    return res
+    return lyrics
 

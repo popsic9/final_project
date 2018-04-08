@@ -13,12 +13,19 @@
             </h1>
             {% endif %}
 
-            {% if songs %}
-            <h2> Songs: All songs in this album </h2>
-                <table>
-                    {% for song in songs %}
+
+
+            {% if songs_val %}
+            <h2> Songs: Valences Larger Than 0.8 </h2>
+                <table style="width:25%">
                     <tr>
-                        <td>{{song[0]}}</td>
+                        <th align="left">Songs</th>
+                        <th>Valences</th>
+                    </tr>
+                    {% for song in songs_val %}
+                    <tr>
+                        <td align="left">{{song[0]}}</td>
+                        <td align="center">{{song[1]}}</td>
                     </tr>
                     {% endfor %}
                 </table>
@@ -34,6 +41,7 @@
             <pre>
 -------------------------------------------------------------------------------------------------------------------------------------
             </pre>
+
             <a href = '/album/info?album={{album}}'>Back to {{album}}</a>
         </div>
         </center>

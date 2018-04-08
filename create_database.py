@@ -23,6 +23,9 @@ except:
 ###################################################
 #                     Create DB                   #
 ###################################################
+'''
+    Create the database and two tables: 'Artists', 'Songs'
+'''
 def create_db():
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -85,7 +88,7 @@ class Artist():
     def __str__(self):
         return "%s, %s, %s, %d"%(self.name, self.id, self.genre, self.popularity)
 
-class Songs():
+class Song():
     def __init__(self, song_id = "No id", name = "No Name", track_id = None, artist = "No Artist", album = "No album", popularity = None, 
                 duration_ms = None, valence = None, energy = None, lyrics = "No lyrics", json_dict = None):
         self.song_id = song_id
@@ -116,7 +119,10 @@ class Songs():
 ###################################################
 #                   Add Data to DB                #
 ###################################################
-
+'''
+    Get artist information from the cached spotify file and create Artist instance
+    Add Artist instance into "Artists" Table
+'''
 def add_artists(artist_dict):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -136,7 +142,11 @@ def add_artists(artist_dict):
     conn.close()
     return True
 
-
+'''
+    Get artist information from the cached spotify and genius file and create Songs instance
+    Lyrics is in genius file, and other information are in spotify file
+    Add Song instance into "Songs" Table
+'''
 def add_songs(artist_dict, song_dict):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -152,7 +162,7 @@ def add_songs(artist_dict, song_dict):
             pop = album[album_title][0]
 
             for song_id, song_features in album[album_title][1].items():
-                song = Songs(song_id = song_id,name = song_features[1].split("-")[0].strip(), track_id = song_features[0], 
+                song = Song(song_id = song_id,name = song_features[1].split("-")[0].strip(), track_id = song_features[0], 
                             artist = artist, album = album_name, popularity = pop, duration_ms = song_features[2], 
                             valence = song_features[3], energy = song_features[4],json_dict = song_dict[artist])
 

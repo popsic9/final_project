@@ -23,7 +23,7 @@
                     {% endfor %}
                 </table>
                 <br><br>
-                <form action="/songs" method="GET">
+                <form action="/album/info" method="GET">
                     <label>
                         <b>Select an album</b>
                         <input name = "album" type="text" placeholder="Start typing..." />
@@ -34,12 +34,7 @@
             <pre>
 -------------------------------------------------------------------------------------------------------------------------------------
             </pre>
-            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-            {{ plot|safe }}
-            <pre>
--------------------------------------------------------------------------------------------------------------------------------------
-            </pre>
-            <a href = '/'>Back to Home</a>
+            <a href = '/info?artist_name={{url}}'>Back to {{artist}}'s Page</a>
         </div>
         </center>
     </body>

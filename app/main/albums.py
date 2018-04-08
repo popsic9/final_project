@@ -67,34 +67,40 @@ def plot(words_count, artist):
     return div
 
 
+
 @albums.route('/albums', methods = ['GET'])
 def index():
     artist = request.args.get('artist_name')
     if artist:
-        try: 
-            album_list = get_albums(artist)
-        except:
-            # cache new data
-            spotify.get_cached_data(artist)
-            # open nearest cache file
-            with open(SPOTIFY_CACHE, 'r') as f:
-                artist_dict = json.loads(f.read())
-            # # repeat for related artists
-            # for related_artist in artist_dict[artist]['info'][-1]:
-            #     spotify.get_cached_data(related_artist)
-            # with open(SPOTIFY_CACHE, 'r') as f:
-            #     artist_dict = json.loads(f.read())
-
-            # get songs for specified artists and related artists
-            genius.get_cached_lyrics(artist_dict)
-            with open(GENIUS_CACHE, 'r') as f:
-                song_dict = json.loads(f.read())
-        
-            # put into database
-            add_artists(artist_dict)
-            add_songs(artist_dict, song_dict)
-            album_list = get_albums(artist)
+        album_list = get_albums(artist)
         song_list = get_songs(artist)
         text = top_10_words(song_list)
         div = plot(text, artist)
-    return render_template('albums.html', artist = artist, album_list = album_list, plot = div)
+        url = '+'.join(artist.split(" "))
+    return render_template('albums.html', artist = artist, album_list = album_list, url = url)
+
+@albums.route('/album/info', methods = ['GET'])
+def show_info():
+    album = request.args.get('album')
+    url = '+'.join(album.split(" "))
+    hre = "/"
+    b = None 
+    if album:
+        songs = get_songs_in_albums(album)
+        if songs == []:
+            url = None
+            b = 1
+    return render_template('album_info.html', artist = album, url = url, hre = hre, b = b)
+
+
+
+
+@albums.route('/top10', methods = ['GET'])
+def top_ten():
+    artist = request.args.get('artist_name')
+    if artist:
+        song_list = get_songs(artist)
+        text = top_10_words(song_list)
+        div = plot(text, artist)
+        url = '+'.join(artist.split(" "))
+    return render_template('top10.html', artist = artist, url = url, plot = div)

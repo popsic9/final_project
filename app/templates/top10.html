@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Artist: {{ artist }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+    <body>
+        <center>
+        {% if artist %}
+            <h1> {{ artist }}'s Top 10 Words</h1>
+        {% endif %}
+        <div class="content">
+            <div id = "demo">
+                <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+                {{ plot|safe }}
+            </div>
+            <pre>
+-------------------------------------------------------------------------------------------------------------------------------------
+            </pre>
+            <a href = '/info?artist_name={{url}}'>Back to {{artist}}'s Page</a>
+        </div>
+        </center>
+    </body>
+    <center>
+    <footer>
+        <br><br><br><br>
+         <p>All rights reserved by CHEN SUN</p>
+    </footer>
+    </center>
+
+</html>

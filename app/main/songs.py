@@ -97,14 +97,28 @@ def index():
     album = request.args.get('album')
     if album:
         songs = get_songs_in_albums(album)
+        if songs == []:
+            songs = [('The Name is Wrong, Please Return',)]
+    return render_template('songs.html', album = album, songs = songs)
+
+@songs.route('/songsVal', methods = ['GET'])
+def index_2():
+    album = request.args.get('album')
+    if album:
         songs_val = get_songs_valences(album)
         if songs_val == []:
             songs_val = [("There is no song whose valence is larger than 0.8 in this album", "")]
+    return render_template('songs_val.html', album = album,songs_val = songs_val)
+
+@songs.route('/songs/plot', methods = ['GET'])
+def index_3():
+    album = request.args.get('album')
+    if album:
+        songs = get_songs_in_albums(album)
         if songs == []:
             songs = [('The Name is Wrong, Please Return',)]
-            songs_val = None
-            div = '<br>'
+            div = "<p> The Name is Wrong, Please Return</p>"
         else:
             song_list = get_songs_valences_energy(album)
             div = plot(song_list)
-    return render_template('songs.html', album = album, songs = songs, songs_val = songs_val, plot = div)
+    return render_template('songs_vs.html', album = album, plot = div)

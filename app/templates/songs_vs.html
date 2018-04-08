@@ -9,31 +9,16 @@
         <div class="content">
             {% if album %}
             <h1>
-                Songs in {{ album }}
+                {{ album }} : Valence vs. Energy
             </h1>
             {% endif %}
 
-            {% if songs %}
-            <h2> Songs: All songs in this album </h2>
-                <table>
-                    {% for song in songs %}
-                    <tr>
-                        <td>{{song[0]}}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            {% endif %}
-            <form action="/lyrics" method="GET">
-                <label>
-                    <p> </p>
-                    <b>Select a Song to get its lyrics</b>
-                    <input name="song" type="text" placeholder="Start typing..." />
-                </label>
-                <button type="submit">Input</button>
-            </form>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            {{ plot|safe }}
             <pre>
 -------------------------------------------------------------------------------------------------------------------------------------
             </pre>
+
             <a href = '/album/info?album={{album}}'>Back to {{album}}</a>
         </div>
         </center>

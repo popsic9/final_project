@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Artist: {{ artist }}</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+    </head>
+
+
+    <body>
+        <center>
+        <div class="content">
+            
+            {% if artist %}
+            <h1> {{ artist }}'s Albums</h1>
+            {% endif %}
+
+            {% if url %}
+            <a href="/albums?artist_name={{url}}"> Show ALbums </a>
+            <br>
+            <a href="/top10?artist_name={{url}}"> Show Top 10</a>
+            {% endif %}
+            <br>
+            <br>
+            <br>
+            <a href = "/">Back to Home</a>
+        </div>
+        </center>
+    </body>
+    <center>
+        <footer>
+        <br><br><br><br>
+        <p>All rights reserved by CHEN SUN</p>
+        </footer>
+    </center>
+</html>
