@@ -26,20 +26,26 @@ The goal of this project is to make a web page for searching artists and display
 
 ## Code
 1. Using Spotify API to search an artist information via his name to get {genre, popularity, albums, songs in the albums, songs information} and caching the results into 'artist.json'
--       get_data_from_spotify.py
+```Python3
+     get_data_from_spotify.py
+     ```
 2. Using Genius API to search the api_path of the lyrics of the song by using the artist name and song name in artist.json. Once the user gets the api_path of the lyrics, he/she can get the lyrics via api_path.
-    The user can't get api_path if aliaing problems between different APIs happen.(Same artist, different name in Spotify and Genius) To solve this issue, the user will search the exact url of the page of the song and then manually scrapes the lyrics from the page.
-    All the lyrics will be cached in 'songs.json'
--       get_data_from_genius.py
+- The user can't get api_path if aliaing problems between different APIs happen.(Same artist, different name in Spotify and Genius) To solve this issue, the user will search the exact url of the page of the song and then manually scrapes the lyrics from the page.
+- All the lyrics will be cached in 'songs.json'
+```Python3
+    get_data_from_genius.py
+    ```
 3. Creating 2 classes, one is Artist and the other is Song.
     Creating a Database called SpotifyAndGenius and add two tables, *Songs* and *Artists* using sqlite3. Add the information of Artist and Song instances into database.
--       create_database.py
--       class Artist():
-            def __init__(self, name = "No Name", id = None, genre = "No genre", popularity = None, related_artists = None, json_dict = None):
-                pass
--       class Song():
--           def __init__(self, song_id = "No id", name = "No Name", track_id = None, artist = "No Artist", album = "No album", popularity = None, duration_ms = None, valence = None, energy = None, lyrics = "No lyrics", json_dict = None):
-            -   pass
+    ```Python3
+    create_database.py
+    class Artist():
+        def __init__(self, name = "No Name", id = None, genre = "No genre", popularity = None, related_artists = None, json_dict = None):
+            pass
+    class Song():
+        def __init__(self, song_id = "No id", name = "No Name", track_id = None, artist = "No Artist", album = "No album", popularity = None, duration_ms = None, valence = None, energy = None, lyrics = "No lyrics", json_dict = None):
+            pass
+    ```
 4. All the functions for data processing. i.e.: Getting all artists information from the database, getting all abums information of a specific artist from the database, etc.
 -       database_function.py
 
