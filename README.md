@@ -51,16 +51,15 @@ The goal of this project is to make a web page for searching artists and display
 5. Four testcases testing basic functions of the above code, using unittest.
 - **test_cases.py**
 6. Run the app. All the code of the web (controller/main, static, templates) are in app folder.
+
 - **app.py**
-| File        | Function           |
-| ---------------------------------------------- |:----------------------------------------:|
-| main.py      | Show the current artist in database. |
-
-- | album.py      | Show top10 wors of the artist, or show all albums of the artist|
-| songs.py | Show all songs in the album, show all songs whose valence are larger than 0.8 or show valence vs. energy of all songs|
-| lyrics.py | Show lyrics of the song|
 
 
-
+| **File**        | **Function**           |
+| ------------- |:-------------:|
+| main.py      | Show the current artist in database |
+| album.py      | Show top10 words of the artist, or show all albums of the artist      |
+| songs.py | Show all songs in the albumshow all songs whose valence are larger than 0.8 or show valence vs. energy of all songs     |
+| lyrics.py | Show lyrics of the song     |
 
 
