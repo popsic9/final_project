@@ -6,17 +6,20 @@ The goal of this project is to make a web page for searching artists and display
 ## Data Sources
 1. Spotify API
     OAuth2: Need client_id and client_secret
-    Instructiton: https://developer.spotify.com/web-api/tutorial/
+    [Instructiton](https://developer.spotify.com/web-api/tutorial/)
     Save clident_id and client_secret into 'spotify_secret.py'
-    -       client_id = 'xxxxxxxxxxx'
-    -       client_secret = 'xxxxxxxxxxxxxx'
+    ```python
+    client_id = 'xxxxxxxxxxx'
+    client_secret = 'xxxxxxxxxxxxxx'
+    ```
 2. Genius API
     API Key: Need client_id, client_secret and client_token
-    Instruction: https://docs.genius.com/
+    [Instruction](https://docs.genius.com/)
     Save clident_id, client_secret and client_token into 'genius_secret.py'
-    -       client_id = 'xxxxxxxxxxx'
-    -       client_secret = 'xxxxxxxxxxxxxx'
-    -       client_token = 'xxxxxxxxxxxxx'
+    ```client_id = 'xxxxxxxxxxx'
+    client_secret = 'xxxxxxxxxxxxxx'
+    client_token = 'xxxxxxxxxxxxx'
+    ```
 3. Lyrics Page
     Depends on different songs. i.e. https://genius.com/Xxxtentacion-sad-lyrics
 
