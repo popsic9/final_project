@@ -59,12 +59,12 @@ class TestClass(unittest.TestCase):
         self.assertEqual(artist.__str__(), string)
     
     def test_Songs_init(self):
-        song = Songs(song_id = "1", name = "Happy", track_id = 1, artist = "Chen", album = "Day", popularity = 1, 
+        song = Song(song_id = "1", name = "Happy", track_id = 1, artist = "Chen", album = "Day", popularity = 1, 
                 duration_ms = 200, valence = 70, energy = 80, lyrics = "No lyrics")
         self.assertEqual(song.duration_ms, 200)
     
     def test_Songs_str(self):
-        song = Songs(song_id = "1", name = "Happy", track_id = 1, artist = "Chen", album = "Day", popularity = 1, 
+        song = Song(song_id = "1", name = "Happy", track_id = 1, artist = "Chen", album = "Day", popularity = 1, 
                 duration_ms = 200, valence = 70, energy = 80, lyrics = "No lyrics")
         string = "Happy, Chen, Day, 1, No lyrics"
         self.assertEqual(song.__str__(), string)
@@ -109,24 +109,24 @@ class TestDatabase(unittest.TestCase):
 ###################################################
 #              Part 4  DataBase  Function         #
 ###################################################
-class TestDBFunction(unittest.TestCase):
-    def create_test_db(self):
-        try:
-            with open('test_songs.json', 'r') as f:
-                song_dict = json.loads(f.read())
-        except:
-            song_dict = {}
-        try:
-            with open('test_artists.json', 'r') as f:
-                artist_dict = json.loads(f.read())
-        except:
-            artist_dict = {}
-        self.artist_dict = artist_dict
-        self.song_dict = song_dict
-        create_db()
-        add_artists(self.artist_dict)
-        add_songs(self.artist_dict, self.song_dict)
+#class TestDB(unittest.TestCase):
+def create_test_db():
+    try:
+        with open('test_songs.json', 'r') as f:
+            song_dict = json.loads(f.read())
+    except:
+        song_dict = {}
+    try:
+        with open('test_artists.json', 'r') as f:
+            artist_dict = json.loads(f.read())
+    except:
+        artist_dict = {}
+    create_db()
+    add_artists(artist_dict)
+    add_songs(artist_dict, song_dict)
     
+class TestDBFunction(unittest.TestCase):
+    create_test_db()
     def test_get_artists(self):
         res = get_artists()
         self.assertEqual(res[0][0], "Katy Perry")
